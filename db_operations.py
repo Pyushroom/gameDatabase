@@ -1,8 +1,29 @@
 import sqlite3
 
+def normalize_name(name):
+    """Standardizes platform and store names (e.g., 'pc', 'Pc' → 'PC')."""
+    name = name.strip().lower()  # Remove spaces and convert to lowercase
+    name_map = {
+        "pc": "PC",
+        "steam": "Steam",
+        "epic": "Epic Games",
+        "ps3": "PS3",
+        "ps4": "PS4",
+        "playstation": "PlayStation",
+        "xbox": "Xbox",
+        "xbox one": "Xbox One",
+        "xbox 360": "Xbox 360",
+    }
+    return name_map.get(name, name.capitalize())  # Default: capitalize first letter
+
 def insert_game(title, platform, store, completion_date):
+    """Inserts a game into the database, ensuring consistent platform/store names."""
     conn = sqlite3.connect("games.db")
     cursor = conn.cursor()
+
+    # Normalize platform and store names
+    platform = normalize_name(platform)
+    store = normalize_name(store)
 
     # Insert platform if it doesn't exist
     cursor.execute("INSERT OR IGNORE INTO Platforms (name) VALUES (?)", (platform,))
