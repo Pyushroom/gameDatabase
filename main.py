@@ -1,18 +1,15 @@
 ## creating database and app to manage all my games
-from DatabaseCode import insert_game
+from db_operations import insert_game, get_all_games
+from db_setup import create_database
 
-conn = sqlite3.connect("games.db")
-cursor = conn.cursor()
+# Ensure database is set up before running
+create_database()
 
-cursor.execute("""
-SELECT Games.title, Platforms.name AS platform, Stores.name AS store, Games.completion_date 
-FROM Games
-JOIN Platforms ON Games.platform_id = Platforms.id
-JOIN Stores ON Games.store_id = Stores.id
-""")
-if __name__ == "__main__":
-    games = cursor.fetchall()
-        for game in games:
-            print(game)
+# Example data insertion
+insert_game("Half-Life 2", "PC", "Steam", "2022-03-15")
+insert_game("Bloodborne", "PlayStation", "PS4", "2021-08-10")
 
-    conn.close()
+# Fetch and display all games
+games = get_all_games()
+for game in games:
+    print(f"ID: {game[0]}, Title: {game[1]}, Platform: {game[2]}, Store: {game[3]}, Completed on: {game[4]}")

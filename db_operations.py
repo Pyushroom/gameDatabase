@@ -1,40 +1,5 @@
 import sqlite3
 
-# Connect to SQLite (or create database file)
-conn = sqlite3.connect("games.db")
-cursor = conn.cursor()
-
-# Create tables
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS Platforms (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL
-)
-""")
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS Stores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL
-)
-""")
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS Games (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    platform_id INTEGER,
-    store_id INTEGER,
-    completion_date TEXT,
-    FOREIGN KEY (platform_id) REFERENCES Platforms(id),
-    FOREIGN KEY (store_id) REFERENCES Stores(id)
-)
-""")
-
-conn.commit()
-conn.close()
-
-
 def insert_game(title, platform, store, completion_date):
     conn = sqlite3.connect("games.db")
     cursor = conn.cursor()
@@ -58,6 +23,18 @@ def insert_game(title, platform, store, completion_date):
     conn.commit()
     conn.close()
 
+def get_all_games():
+    """Fetch all games from the database."""
+    conn = sqlite3.connect("games.db")
+    cursor = conn.cursor()
 
+    cursor.execute("""
+        SELECT Games.id, Games.title, Platforms.name, Stores.name, Games.completion_date
+        FROM Games
+        JOIN Platforms ON Games.platform_id = Platforms.id
+        JOIN Stores ON Games.store_id = Stores.id
+    """)
 
-
+    games = cursor.fetchall()
+    conn.close()
+    return games
