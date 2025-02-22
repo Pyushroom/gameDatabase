@@ -2,7 +2,7 @@
 from db_operations import insert_game, get_all_games
 from db_setup import create_database
 
-from gui import create_gui
+from gui.main_gui import create_gui
 
 if __name__ == "__main__":
     # Ensure database is set up before running
